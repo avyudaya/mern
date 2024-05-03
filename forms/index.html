@@ -1,15 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <form id="form1" action="">
-        <input type="text" name="name" id="name">
-        <input type="submit" value="submit" id="submit">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Avyudaya's Notes</h1>
+    <hr />
+
+    <form id="create-note-form" action="">
+      <input
+        placeholder="your new note here"
+        type="text"
+        name="note"
+        id="new-note"
+      />
+      <input type="submit" value="Create note" />
     </form>
+
+    <ul>
+      <li>Take out trash.</li>
+      <li>Go shopping.</li>
+      <li>Study for 1 hour.</li>
+    </ul>
+
     <script src="script.js"></script>
-</body>
+  </body>
 </html>

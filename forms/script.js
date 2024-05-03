@@ -1,11 +1,10 @@
-let form1 = document.getElementById("form1");
+let notes = [];
+let form = document.getElementById('create-note-form');
 
-console.log(form1);
-
-form1.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  let name = document.getElementById("name").value;
-
-  console.log(name);
-});
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    let newNote = document.getElementById('new-note').value;
+    notes.push(newNote);
+    console.log(notes);
+})
