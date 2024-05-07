@@ -17,7 +17,16 @@ form.addEventListener('submit', (e) => {
     localStorage.setItem("notes", JSON.stringify(notes));
     showNotes();
     document.getElementById('new-note').value = "";
-})  
+})
+
+function deleteNote(index) {
+    if(confirm(`Are you sure you want to delete: ${notes[index]}?`) === false){
+        return;
+    }
+    notes.splice(index, 1);
+    localStorage.setItem("notes", JSON.stringify(notes));
+    showNotes();
+}
 
 showNotes();
 function showNotes(){
@@ -25,12 +34,12 @@ function showNotes(){
     let html = "";
 
     notes.forEach((note, index) => {
-        html += `<div class="card" style="width: 18rem;">
+        html += `<div class="card col-12 m-2" style="width: 18rem;">
         <div class="card-body">
           <h5 class="card-title">Note ${index+1}</h5>
           <p class="card-text">${note}</p>
-          <a href="#" class="btn btn-secondary">Update</a>
-          <a href="#" class="btn btn-danger">Delete</a>
+          <button href="#" class="btn btn-secondary">Update</button>
+          <button onClick="deleteNote(${index})" href="#" class="btn btn-danger">Delete</button>
         </div>
       </div>`
     })
