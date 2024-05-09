@@ -58,8 +58,49 @@ function showNotes() {
   ulTag.innerHTML = html;
 }
 
+/*
+ALGORITHM
+
+1. get the search text: line 72
+2. get all the notes from the dom : line 82
+3. for each note do: (line 92 to 99)
+      match note text and search text
+        if match:
+          show
+        else:
+          hide
+*/
+
 searchForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    let searchText = document.getElementById("search-text").value;
+    e.preventDefault();  // prevent from relloading
+    let searchText = document.getElementById("search-text").value;  // get the value in the search box input
+
+    // if we have search text entered show it in html else remove it
+    if(searchText != ""){
+      document.getElementById("searching-for").innerHTML = `<h3 class="mt-5">Searching for: ${searchText}</h3>`;
+    } else {
+      document.getElementById("searching-for").innerHTML = "";
+    }
+
+    // get all the notes card in our document as object
     let allNotes = document.getElementsByClassName('notesss');
+
+    // 1. first convert the object to array.
+    // 2. then loop through the array and check if the note contains the search text or not.
+    // 3. if it contains then show the note else hide it.
+
+    let counter = 0;
+
+    Array.from(allNotes).forEach(element => {
+      let note = element.getElementsByTagName('p')['0'].innerText;
+      if(note.includes(searchText)){
+        element.style.display = 'block';
+      } else {
+        element.style.display = 'none';
+      }
+    });
+
+    if(counter===0){
+      // show no results found.
+    }
 });
