@@ -1,23 +1,27 @@
 import { useState } from "react";
+import Display from "./Display";
+import Button from "./Button";
 
 const App = () => {
-  const [counter, setCounter] = useState(0);
+  const [counter, setCounter] = useState(1);
+  const [liked, setMessage] = useState(false);
 
-  const increaseClick = () => {
-    setCounter(counter+1)
+  const handleState = () => {
+    if (liked === false) {
+      increasedbyone();
+    } else {
+      decreasedbyone();
+    }
+    setMessage(!liked);
   };
-
-  const decreaseClick = () => {
-    setCounter(counter-1)
-  }
+  const increasedbyone = () => setCounter(counter + 1);
+  const decreasedbyone = () => setCounter(counter - 1);
 
   return (
     <div>
-      <div>{counter}</div>
-      <button onClick={increaseClick}>plus</button>
-      <button onClick={decreaseClick}></button>
+      <Display counter={counter} />
+      <Button onClick={handleState} text={liked? "Unlike": "Like"} />
     </div>
   );
 };
-
 export default App;
