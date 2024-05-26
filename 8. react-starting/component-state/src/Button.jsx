@@ -1,5 +1,3 @@
-const Button = (props) => {
-  return <button onClick={props.onClick}>{props.text}</button>;
-};
+const Button = ({status, onClick, text}) => <button disabled={status} onClick={onClick}>{text}</button>;
 
 export default Button;
