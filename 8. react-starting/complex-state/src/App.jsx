@@ -18,20 +18,24 @@ const App = () => {
   const validateData = () => {
     if (name === "" || age === "") {
       alert("Name and age cannot be empty");
-      return;
+      return false;
     }
     if(name.length < 3){
       alert("Name should be at least 3 characters long");
-      return;
+      return false;
     }
     if(isNaN(parseInt(age))){
       alert("Age must be a number");
-      return;
+      return false;
     }
+    return true;
   }
 
   const handleSubmit = () => {
-    validateData();
+    const validate = validateData();
+    if(validate === false){
+      return;
+    }
 
     const newPerson = {
       id: persons.length + 1,
