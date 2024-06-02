@@ -33,7 +33,7 @@ const App = () => {
 
   const handleSubmit = () => {
     const validate = validateData();
-    if(validate === false){
+    if(!validate){
       return;
     }
 
