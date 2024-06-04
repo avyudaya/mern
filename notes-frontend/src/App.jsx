@@ -1,22 +1,83 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import Note from "./Note";
 
 const App = () => {
-
-  const [notes, setNotes] = useState([])
+  // variables
+  const [newNote, setNewNote] = useState("");
+  const [notes, setNotes] = useState([]);
+  const [showAll, setShowAll] = useState(true);
 
   useEffect(() => {
-    const promise = axios.get("http://localhost:3001/notes");
-    promise.then((response) => {
-      console.log(response.data);
+    axios.get("http://localhost:3001/notes").then((response) => {
       setNotes(response.data);
     });
   }, []);
 
-  return <div>
-    <h1>Notes</h1>
-    {notes.map((note) => <li key={note.id}>{note.content}</li>)}
-  </div>;
+  // called when form is submitted
+  const addNote = (e) => {
+    // does not refresh
+    e.preventDefault();
+    // new note obj
+    const note = {
+      content: newNote,
+      important: Math.random() < 0.5,
+    };
+    // send the data to the server and set the response as new notes
+    axios.post("http://localhost:3001/notes", note).then((response) => {
+      setNotes(notes.concat(response.data));
+    });
+
+    // set back to normal for next add on
+    setNewNote("");
+  };
+
+  const toggleImportance = (id) => {
+    const url = `http://localhost:3001/notes/${id}`
+    const note = notes.find(n => n.id === id)
+    const changedNote = {...note, important:!note.important}
+
+    console.log(url, changedNote);
+
+    axios.put(url, changedNote).then(response => {
+      setNotes(notes.map(n => n.id!== id? n : response.data))
+    })
+  }
+
+  // controls which notes to show on the basis of boolean
+  const notesToShow = showAll
+    ? notes
+    : notes.filter((note) => note.important === true);
+
+  return (
+    <div>
+      <h1>Notes App</h1>
+      {/* button to change showAll boolean */}
+      <div>
+        <button onClick={() => setShowAll(!showAll)}>
+          show {showAll ? "important" : "all"}
+        </button>
+      </div>
+
+      {/* form to add the new note as an obj: calls addNote */}
+      <form onSubmit={addNote}>
+        <input
+          type="text"
+          value={newNote}
+          onChange={(e) => setNewNote(e.target.value)}
+        />
+        <button type="submit">Add</button>
+      </form>
+
+      {/* showing all the filtered notes on the basis of boolean */}
+      <h3>All Notes</h3>
+      <ul>
+        {notesToShow.map((note) => (
+          <Note key={note.id} note={note} toggleImportance={toggleImportance}/>
+        ))}
+      </ul>
+    </div>
+  );
 };
 
 export default App;
