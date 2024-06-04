@@ -1,0 +1,14 @@
+{
+    "notes": [
+        {
+            "id": 1,
+            "content": "Hello",
+            "important": true
+        },
+        {
+            "id": 2,
+            "content": "Hi",
+            "important": true
+        }
+    ]
+}
