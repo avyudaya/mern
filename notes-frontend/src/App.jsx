@@ -1,17 +1,25 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Note from "./Note";
+import noteService from "./services/notes";
+import Notification from "./components/Notification";
 
 const App = () => {
   // variables
   const [newNote, setNewNote] = useState("");
   const [notes, setNotes] = useState([]);
   const [showAll, setShowAll] = useState(true);
+  const [errMessage, setErrMessage] = useState(null);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/notes").then((response) => {
-      setNotes(response.data);
-    });
+    noteService
+      .getAll()
+      .then((response) => setNotes(response))
+      .catch((err) => {
+        setErrMessage("Can not get all notes.");
+        setTimeout(() => {
+          setErrMessage(null);
+        }, 3000);
+      });
   }, []);
 
   // called when form is submitted
@@ -24,25 +32,41 @@ const App = () => {
       important: Math.random() < 0.5,
     };
     // send the data to the server and set the response as new notes
-    axios.post("http://localhost:3001/notes", note).then((response) => {
-      setNotes(notes.concat(response.data));
-    });
+    noteService
+      .create(note)
+      .then((response) => {
+        setNotes(notes.concat(response));
+      })
+      .catch((err) => {
+        setErrMessage("The note can not be created. Please try again later.");
+        setTimeout(() => {
+          setErrMessage(null);
+        }, 3000);
+      });
 
     // set back to normal for next add on
     setNewNote("");
   };
 
   const toggleImportance = (id) => {
-    const url = `http://localhost:3001/notes/${id}`
-    const note = notes.find(n => n.id === id)
-    const changedNote = {...note, important:!note.important}
+    const note = notes.find((n) => n.id === id);
+    const changedNote = { ...note, important: !note.important };
+    console.log(changedNote);
+    noteService
+      .update(id, changedNote)
+      .then((response) => {
+        setNotes(notes.map((n) => (n.id !== id ? n : response)));
+      })
+      .catch((error) => {
+        console.log(error);
+        setErrMessage("The note has already been deleted.");
+        setTimeout(() => {
+          setErrMessage(null);
+        }, 3000);
 
-    console.log(url, changedNote);
-
-    axios.put(url, changedNote).then(response => {
-      setNotes(notes.map(n => n.id!== id? n : response.data))
-    })
-  }
+        setNotes(notes.filter((n) => n.id !== id));
+      });
+  };
 
   // controls which notes to show on the basis of boolean
   const notesToShow = showAll
@@ -52,6 +76,7 @@ const App = () => {
   return (
     <div>
       <h1>Notes App</h1>
+      <Notification errMessage={errMessage} />
       {/* button to change showAll boolean */}
       <div>
         <button onClick={() => setShowAll(!showAll)}>
@@ -73,7 +98,7 @@ const App = () => {
       <h3>All Notes</h3>
       <ul>
         {notesToShow.map((note) => (
-          <Note key={note.id} note={note} toggleImportance={toggleImportance}/>
+          <Note key={note.id} note={note} toggleImportance={toggleImportance} />
         ))}
       </ul>
     </div>

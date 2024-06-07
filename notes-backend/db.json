@@ -1,28 +1,18 @@
 {
   "notes": [
     {
-      "id": "1",
-      "content": "Hello",
-      "important": false
-    },
-    {
-      "id": "2",
-      "content": "Hi",
-      "important": false
-    },
-    {
-      "id": "3",
-      "content": "New Note",
-      "important": false
-    },
-    {
-      "id": "4",
-      "content": "whats up",
+      "id": "7e6c",
+      "content": "hello",
       "important": true
     },
     {
-      "id": "1678",
-      "content": "hiii",
+      "id": "a1d2",
+      "content": "hi",
+      "important": true
+    },
+    {
+      "id": "fe68",
+      "content": "",
       "important": false
     }
   ]
