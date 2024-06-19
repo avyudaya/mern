@@ -14,6 +14,7 @@ mongoose.connect(config.MONGODB_URL).then(() => {
     logger.error('error connecting to db', err.message);
 })
 
+app.use(express.json());
 app.use(middleware.requestMiddleware);
 app.use('/api/notes', notesRouter);
 
