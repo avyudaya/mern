@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const logger = require('./utils/logger');
 const config = require('./utils/config');
 const usersRouter = require('./controllers/user');
+const loginRouter = require('./controllers/login');
 
 logger.info('connecting to mongodb');
 mongoose.set('strictQuery', false);
@@ -18,6 +19,7 @@ mongoose.connect(config.MONGODB_URL).then(() => {
 app.use(express.json());
 app.use(middleware.requestMiddleware);
 
+app.use('/api/login', loginRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/notes', notesRouter);
 
