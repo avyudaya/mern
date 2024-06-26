@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Note from "./Note";
 import noteService from "./services/notes";
+import loginService from "./services/login";
 import Notification from "./components/Notification";
 
 const App = () => {
@@ -9,6 +10,9 @@ const App = () => {
   const [notes, setNotes] = useState([]);
   const [showAll, setShowAll] = useState(true);
   const [errMessage, setErrMessage] = useState(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     noteService
@@ -22,8 +26,40 @@ const App = () => {
       });
   }, []);
 
+  useEffect(() => {
+    console.log("getting user")
+    const loggedInUserJSON = window.localStorage.getItem('loggedInUser')
+    if (loggedInUserJSON) {
+      const user = JSON.parse(loggedInUserJSON)
+      setUser(user)
+      noteService.setToken(user.token)
+    }
+  }, [])
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const user = await loginService.login({username, password})
+      
+      setUser(user);
+      noteService.setToken(user.token);
+      window.localStorage.setItem(
+        'loggedInUser', JSON.stringify(user)
+      )
+
+      setUsername("");
+      setPassword("");
+    } catch(ex) {
+      setErrMessage("Wrong username or password.");
+      setTimeout(() => {
+        setErrMessage(null);
+      }, 3000);
+    }
+  }
+
   // called when form is submitted
-  const addNote = (e) => {
+  const addNote = async (e) => {
     // does not refresh
     e.preventDefault();
     // new note obj
@@ -31,19 +67,17 @@ const App = () => {
       content: newNote,
       important: Math.random() < 0.5,
     };
-    // send the data to the server and set the response as new notes
-    noteService
-      .create(note)
-      .then((response) => {
-        setNotes(notes.concat(response));
-      })
-      .catch((err) => {
-        setErrMessage("The note can not be created. Please try again later.");
+
+    try {
+      const response = await noteService.create(note);
+      setNotes(notes.concat(response));
+    } catch(ex) {
+      setErrMessage("The note can not be created. Please try again later.");
         setTimeout(() => {
           setErrMessage(null);
         }, 3000);
-      });
-
+    }
+    
     // set back to normal for next add on
     setNewNote("");
   };
@@ -73,10 +107,48 @@ const App = () => {
     ? notes
     : notes.filter((note) => note.important === true);
 
+  const loginForm = () => (
+    <form onSubmit={handleLogin}>
+        <div>
+        username
+        <input type="text" value={username} name="username" onChange={(e) => setUsername(e.target.value)}/>
+        </div>
+        <div>
+        password
+        <input type="password" value={password} name="password" onChange={(e) => setPassword(e.target.value)}/>
+        </div>
+        <button type="submit">Login</button>
+      </form>
+  );
+
+  const noteForm = () => (
+    <form onSubmit={addNote}>
+        <input
+          type="text"
+          value={newNote}
+          onChange={(e) => setNewNote(e.target.value)}
+        />
+        <button type="submit">Add</button>
+      </form>
+  );
+
+  const logOut = () => {
+    setUser(null)
+    window.localStorage.removeItem('loggedInUser')
+  }
+
   return (
     <div>
       <h1>Notes App</h1>
       <Notification errMessage={errMessage} />
+
+      {!user && loginForm()}
+      {user && <div>
+        <p>{user.username} logged in</p>
+        <button onClick={logOut}>Log out</button>
+        {noteForm()}
+        </div>}
+      
       {/* button to change showAll boolean */}
       <div>
         <button onClick={() => setShowAll(!showAll)}>
@@ -85,14 +157,7 @@ const App = () => {
       </div>
 
       {/* form to add the new note as an obj: calls addNote */}
-      <form onSubmit={addNote}>
-        <input
-          type="text"
-          value={newNote}
-          onChange={(e) => setNewNote(e.target.value)}
-        />
-        <button type="submit">Add</button>
-      </form>
+      
 
       {/* showing all the filtered notes on the basis of boolean */}
       <h3>All Notes</h3>

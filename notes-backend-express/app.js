@@ -7,6 +7,7 @@ const logger = require('./utils/logger');
 const config = require('./utils/config');
 const usersRouter = require('./controllers/user');
 const loginRouter = require('./controllers/login');
+const cors = require('cors');
 
 logger.info('connecting to mongodb');
 mongoose.set('strictQuery', false);
@@ -16,6 +17,7 @@ mongoose.connect(config.MONGODB_URL).then(() => {
     logger.error('error connecting to db', err.message);
 })
 
+app.use(cors());
 app.use(express.json());
 app.use(middleware.requestMiddleware);
 
