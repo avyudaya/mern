@@ -1,8 +1,12 @@
-import noteService from "../services/notes";
+import noteService from "../services/note";
 import loginService from "../services/login";
 import { useState } from "react";
+import {
+  useNavigate
+} from 'react-router-dom';
 
 const Login = ({ setUser }) => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -22,6 +26,9 @@ const Login = ({ setUser }) => {
 
       setUsername("");
       setPassword("");
+
+      navigate("/notes");
+      
     } catch (ex) {
       setErrMessage("Wrong username or password.");
       setTimeout(() => {
