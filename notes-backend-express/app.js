@@ -17,6 +17,7 @@ mongoose.connect(config.MONGODB_URL).then(() => {
     logger.error('error connecting to db', err.message);
 })
 
+app.use(express.static('dist'))
 app.use(cors());
 app.use(express.json());
 app.use(middleware.requestMiddleware);
